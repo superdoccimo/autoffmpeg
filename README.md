@@ -69,18 +69,24 @@ Official FFmpeg Website: https://www.ffmpeg.org/
 
 BtbN FFmpeg Builds: https://github.com/BtbN/FFmpeg-Builds/releases
 
-Additional Resources
-[Coming Soon]
+## Additional Resources
 
-Blog Article
-Blog Article (Japanese)
-Blog Article (Hindi)
-YouTube Tutorial
-YouTube Tutorial (Japanese)
+### Blog Articles
+- [Blog Article (English)](https://showa.fun/ffmpeg-install)
+- [Blog Article (Japanese)](https://minokamo.tokyo/2025/01/25/8368/)
+- [Blog Article (Hindi)](https://minokamo.in/ffmpeg-install/)
 
-License
-MIT License
-Author
-[Your Name/Handle]
-Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+### YouTube Tutorials
+- [YouTube Tutorial (English)](https://youtu.be/T6HcjWr6LgA)
+- [YouTube Tutorial (Japanese)](https://youtu.be/OuVNmCBnjm0)
+
+---
+
+## License
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## Contributing
+Contributions are welcome!  
+Please feel free to submit a [Pull Request](https://github.com/superdoccimo/autoffmpeg/pulls).
