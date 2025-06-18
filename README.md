@@ -33,6 +33,26 @@ This PowerShell script automates the installation of FFmpeg on Windows systems. 
     ffmpeg -version
     ```
 
+## Customization
+
+Edit variables at the top of `install_ffmpeg.ps1` to adjust where FFmpeg is
+downloaded from or installed.  The defaults look like this:
+
+```powershell
+$ffmpegUrl  = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip"
+$installDir = Join-Path $env:ProgramFiles "ffmpeg"
+```
+
+Change `$ffmpegUrl` to download a different build. For example, a 32‑bit build
+can be referenced as:
+
+```powershell
+$ffmpegUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win32-gpl-shared.zip"
+```
+
+Modify `$installDir` if you want to place FFmpeg somewhere other than the
+default `C:\Program Files\ffmpeg`.
+
 ## Important Note After Installation
 
 After running the script:

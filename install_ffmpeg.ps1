@@ -1,3 +1,4 @@
+
 ##############################################################################
 # install_ffmpeg.ps1
 #  - Downloads FFmpeg from GitHub (BtbN/FFmpeg-Builds)
@@ -5,6 +6,13 @@
 #  - Adds "...\bin" to the machine PATH (if not already present)
 #  - Requires Administrator privileges
 ##############################################################################
+
+# Ensure the script is running with Administrator privileges
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Error "Administrator privileges are required to run this script."
+    exit 1
+}
 
 # === Configuration (adjust if needed) ===
 $ffmpegUrl      = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip"
