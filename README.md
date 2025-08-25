@@ -9,6 +9,9 @@ This PowerShell script automates the installation of FFmpeg on Windows systems. 
 - Removes existing installations if present (safe for reinstallation)
 - Provides clear status messages during installation
 - Verifies installation success
+- Enhanced PATH handling with duplicate removal
+- Retry mechanism for reliable downloads
+- Version-specific installation support
 
 ## Requirements
 
@@ -27,6 +30,10 @@ This PowerShell script automates the installation of FFmpeg on Windows systems. 
 4. Run the script:
     ```powershell
     .\install_ffmpeg.ps1
+    ```
+   Or specify a specific version:
+    ```powershell
+    .\install_ffmpeg.ps1 -VersionTag "2025-01-25"
     ```
 5. Verify installation:
     ```powershell

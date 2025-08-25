@@ -8,14 +8,43 @@
 ##############################################################################
 
 # Ensure the script is running with Administrator privileges
-$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
-if (-not $isAdmin) {
-    Write-Error "Administrator privileges are required to run this script."
+$IsAdmin = ([Security.Principal.WindowsPrincipal]
+    [Security.Principal.WindowsIdentity]::GetCurrent()
+).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $IsAdmin) {
+    Write-Error "Please run PowerShell as Administrator."
     exit 1
 }
 
+# Force TLS 1.2 for secure downloads
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# Download function with retry capability
+function Invoke-Download($url, $dst) {
+    $max = 3
+    for ($i = 1; $i -le $max; $i++) {
+        try { 
+            Invoke-WebRequest -Uri $url -OutFile $dst -UseBasicParsing
+            return 
+        }
+        catch { 
+            if ($i -eq $max) { throw }
+            Write-Host "Download attempt $i failed, retrying in $((2*$i)) seconds..."
+            Start-Sleep -Seconds (2*$i)
+        }
+    }
+}
+
 # === Configuration (adjust if needed) ===
-$ffmpegUrl      = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip"
+param(
+    [string]$VersionTag = "latest"
+)
+
+if ($VersionTag -eq "latest") {
+    $ffmpegUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip"
+} else {
+    $ffmpegUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/$VersionTag/ffmpeg-master-latest-win64-gpl-shared.zip"
+}
 $tempZip        = Join-Path $env:TEMP "ffmpeg.zip"
 $tempExtractDir = Join-Path $env:TEMP "temp_ffmpeg_extract"
 $installDir     = Join-Path $env:ProgramFiles "ffmpeg"
@@ -47,7 +76,7 @@ catch {
 try {
     Write-Host ""
     Write-Host "Downloading FFmpeg from: $ffmpegUrl"
-    Invoke-WebRequest -Uri $ffmpegUrl -OutFile $tempZip -UseBasicParsing
+    Invoke-Download -url $ffmpegUrl -dst $tempZip
     Write-Host "Download completed: $tempZip"
 }
 catch {
@@ -119,33 +148,43 @@ try {
     Write-Host ""
     Write-Host "Checking PATH for FFmpeg bin folder..."
 
-    $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-    $pathItems   = $machinePath -split ";"
+    # Enhanced PATH normalization function
+    function Normalize-Path([string]$p) {
+        if (-not $p) { return $null }
+        $q = $p.Trim('"').Trim()
+        if (-not (Test-Path $q)) { return $null }   # Skip non-existent paths
+        try {
+            return ((Get-Item $q).FullName.TrimEnd("\"))
+        } catch { return $null }
+    }
 
-    # Normalize bin path (resolve short/long path differences)
-    $normalizedBinPath = (Get-Item $binPath).FullName.TrimEnd("\")
+    $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
+    $pathItems = $machinePath -split ";" | Where-Object { $_ -and $_.Trim() -ne "" }
+
+    # Normalize the FFmpeg bin path
+    $normalizedBinPath = (Normalize-Path $binPath)
+    if (-not $normalizedBinPath) {
+        Write-Error "FFmpeg bin not found: $binPath"
+        exit 1
+    }
+
+    # Use HashSet to handle duplicates and check existence
+    $normalizedSet = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     $alreadyExists = $false
 
-    foreach ($item in $pathItems) {
-        try {
-            $normalizedItem = (Get-Item $item).FullName.TrimEnd("\")
-            if ([String]::Compare($normalizedItem, $normalizedBinPath, $true) -eq 0) {
-                $alreadyExists = $true
-                break
-            }
-        }
-        catch {
-            # Ignore any parse errors (e.g. system variables that are not real paths)
+    foreach ($raw in $pathItems) {
+        $n = Normalize-Path $raw
+        if ($n) {
+            if (-not $normalizedSet.Add($n)) { continue } # Skip duplicates
+            if ($n -eq $normalizedBinPath) { $alreadyExists = $true }
         }
     }
 
     if (-not $alreadyExists) {
-        Write-Host "Adding FFmpeg bin folder to PATH..."
-        $newPath = $machinePath + ";" + $normalizedBinPath
-        [System.Environment]::SetEnvironmentVariable("Path", $newPath, "Machine")
-        Write-Host "FFmpeg bin folder added to PATH."
-    }
-    else {
+        $newPath = ($normalizedSet + $normalizedBinPath) -join ";"
+        [Environment]::SetEnvironmentVariable("Path", $newPath, "Machine")
+        Write-Host "Added FFmpeg bin to PATH."
+    } else {
         Write-Host "FFmpeg bin folder is already in PATH."
     }
 }
