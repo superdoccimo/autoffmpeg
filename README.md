@@ -99,8 +99,8 @@ BtbN FFmpeg Builds: https://github.com/BtbN/FFmpeg-Builds/releases
 ## Additional Resources
 
 ### Blog Articles
-- [Blog Article (English)](https://vibelsd.com/ffmpeg-install)
-- [Blog Article (English)](https://vibelsd.com/ffmpeg8/)
+- [Blog Article (English)](https://betelgeuse.work/ffmpeg-install)
+- [Blog Article (English)](https://betelgeuse.work/ffmpeg8/)
 - [Blog Article (Japanese)](https://minokamo.tokyo/2025/01/25/8368/)
 - [Blog Article (Japanese)](https://minokamo.tokyo/2025/08/26/9234/)
 - [Blog Article (Hindi)](https://minokamo.in/ffmpeg-install/)
