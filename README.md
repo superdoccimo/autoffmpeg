@@ -105,8 +105,7 @@ BtbN FFmpeg Builds: https://github.com/BtbN/FFmpeg-Builds/releases
 - [Blog Article (Japanese)](https://minokamo.tokyo/2025/08/26/9234/)
 - [Blog Article (Hindi)](https://minokamo.in/ffmpeg-install/)
 - [Blog Article (Hindi)](https://minokamo.in/ffmpeg8/)
-- [Blog Article (Español)](https://vibelsd.net/ffmpeg-install/)
-- [Blog Article (Español)](https://vibelsd.net/ffmpeg8/)
+- [Blog Article (Español)](https://ehrigite.com/ffmpeg8/)
 
 ### YouTube Tutorials
 - [YouTube Tutorial (English)](https://youtu.be/T6HcjWr6LgA)
